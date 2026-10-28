@@ -116,6 +116,16 @@ Other notes:
 - Noise-control changes take ~1.5 s to apply; a read immediately after a write
   may return the old value.
 
+## Troubleshooting
+
+| Symptom | Cause |
+|---|---|
+| `the earbuds are not connected` | Powered off or in the case. Take them out and connect them in your Bluetooth settings. |
+| `the Bluetooth channel is busy` | A previous connection has not been released yet. Wait a few seconds; if it persists, disconnect and reconnect the earbuds. |
+| `authentication was rejected` | The phone app holds the control channel. Turn off "dual device connection" on the phone, or quit the app. |
+| Widget does not appear | The earbuds are not connected (that is by design). Also check Settings → Plugins that the plugin is enabled. |
+| Mode change seems ignored | Noise control takes ~1.5 s to apply. Read back after waiting. |
+
 ## Credits
 
 The protocol was not documented anywhere in one piece. This builds on:
