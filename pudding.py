@@ -203,6 +203,17 @@ def find_device(explicit=None):
     sys.exit("找到多台候选：" + ", ".join(cands) + "，请用 -a 指定。")
 
 
+def bt_connected(mac):
+    """耳机在系统蓝牙里是否处于已连接状态。用来把底层 errno 翻译成人话。"""
+    import subprocess
+    try:
+        out = subprocess.run(["bluetoothctl", "info", mac], capture_output=True,
+                             text=True, timeout=4).stdout
+    except Exception:
+        return None
+    return "Connected: yes" in out
+
+
 # ---- 连接 + 认证 ----------------------------------------------------------
 
 class Pudding:
@@ -495,11 +506,21 @@ def main():
     try:
         p = Pudding(mac, args.channel)
     except (OSError, RuntimeError) as e:
+        # 把底层 errno 翻成人话：没连上 / 被占用 / 认证被拒，三种原因处理方式不同
+        if bt_connected(mac) is False:
+            msg = "耳机没有连接。请开机或从充电盒取出，再在系统蓝牙里连上它。"
+        elif "busy" in str(e).lower():
+            msg = "蓝牙通道被占用。等几秒重试；如果一直这样，断开再重连耳机。"
+        elif "认证" in str(e):
+            msg = ("认证没通过。可能是手机 App 正占着控制通道 —— "
+                   "在手机端关掉「双设备连接」，或退出 App 后再试。")
+        else:
+            msg = str(e)
         if args.json:
-            print(json.dumps({"ok": False, "connected": False, "error": str(e)},
+            print(json.dumps({"ok": False, "connected": False, "error": msg},
                              ensure_ascii=False))
             sys.exit(2)
-        sys.exit(f"连不上 {mac}：{e}\n耳机要在开机状态、没连手机。")
+        sys.exit(f"连不上 {mac}：{msg}")
 
     try:
         if args.cmd == "status":
