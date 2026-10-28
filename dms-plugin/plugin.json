@@ -1,0 +1,22 @@
+{
+  "id": "puddingControl",
+  "name": "MOONDROP Pudding",
+  "description": "从 DankBar 控制水月雨 Pudding 耳机：降噪模式、输出增益、双设备连接、LDAC，并显示三路电量",
+  "version": "1.0.0",
+  "author": "Alma",
+  "icon": "headphones",
+  "type": "widget",
+  "capabilities": [
+    "dankbar-widget"
+  ],
+  "component": "./PuddingWidget.qml",
+  "settings": "./PuddingSettings.qml",
+  "requires": [
+    "python3"
+  ],
+  "permissions": [
+    "process",
+    "settings_read",
+    "settings_write"
+  ]
+}
